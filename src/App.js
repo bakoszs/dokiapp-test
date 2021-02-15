@@ -19,7 +19,7 @@ const App = () => {
     </AppBar>
     <main>
       <Switch>
-        <Route path="/:name">
+        <Route path="/movies">
           <MovieDetails />
         </Route>
         <Route path="/">

@@ -33,7 +33,7 @@ const MovieCard = ({ movie }) => {
         <CardMedia title={movie.name} image={(movie.poster && movie.poster.thumbnail) || getFallbackPosterThumbnail(movie.name)} className={classes.poster} />
         <CardContent>
             <Typography variant="h5" gutterBottom>
-                <Link component={RouterLink} to={`/${movie.name}`}>
+                <Link component={RouterLink} to={`/movies?id=${movie.id}&name=${movie.name}`}>
                     {movie.name}
                 </Link>
             </Typography>

@@ -10,6 +10,7 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import { useWiki } from "./useWiki";
+import { useQuery } from "../../useQuery";
 import { Config } from "../../config";
 
 const useStyles = makeStyles((theme) => ({
@@ -28,7 +29,12 @@ const useStyles = makeStyles((theme) => ({
 const MovieDetails = () => {
     
     const classes = useStyles();
-    const { name } = useParams();
+    //const { name } = useParams();
+    const q = useQuery();
+    const id = q.get("id");
+    const name = q.get("name");
+    console.log("query =", id, name, q);
+
     const [movieTitle, updateMovieTitle] = useState("");
 
     const { response, error, loading, execute } = useWiki({
@@ -81,7 +87,8 @@ const MovieDetails = () => {
     }
 
     // For the sake of simplicity, I only care about a single result
-    
+    if(!response) return null;
+
     const { query } = response;
     if(!query) return null;
 
@@ -100,12 +107,12 @@ const MovieDetails = () => {
                 <Button variant="contained" onClick={visitWikipedia} color="primary">View on Wikipedia</Button>
             </Grid>
             <Grid item xs>
-                <Button variant="contained" onClick={visitImdb} color="primary">View on IMDB</Button>
+                <Button variant="contained" onClick={visitImdb} color="primary" disabled>View on IMDB</Button>
             </Grid>
         </Grid>
         
         <Paper elevation={3} className={classes.paper}>
-            <Typography variant="body2" component="p">{firstPage.extract}</Typography>
+            <Typography variant="body2" component="p">{firstPage.extract || "Wikipedia had no information about this movie"}</Typography>
         </Paper>
     </Container>;
 };

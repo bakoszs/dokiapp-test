@@ -9,7 +9,7 @@ import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
-import { useWiki } from "./useWiki";
+import { tmdbApi, useApi, wikiApi } from "./useApi";
 import { useQuery } from "../../useQuery";
 import { Config } from "../../config";
 
@@ -29,15 +29,16 @@ const useStyles = makeStyles((theme) => ({
 const MovieDetails = () => {
     
     const classes = useStyles();
-    //const { name } = useParams();
-    const q = useQuery();
-    const id = q.get("id");
-    const name = q.get("name");
-    console.log("query =", id, name, q);
+    
+    const qs = useQuery();
+    const id = qs.get("id");
+    const name = qs.get("name");
 
-    const [movieTitle, updateMovieTitle] = useState("");
+    const [movieTitle, updateMovieTitle] = useState();
+    const [movieId, updateMovieId] = useState();
 
-    const { response, error, loading, execute } = useWiki({
+    const { response, error, loading, execute } = useApi({
+        api: wikiApi,
         config: {
             params: {
                 action: "query",
@@ -46,7 +47,21 @@ const MovieDetails = () => {
                 format: "json",
                 origin: "*",
                 prop: "extracts",
+                redirects: true,
                 titles: movieTitle
+            }
+        },
+        options: {
+            manual: true
+        }
+    });
+
+    const { response: tmdbResponse, error: tmdbError, loading: tmdbLoading, execute: tmdbExecute } = useApi({
+        api: tmdbApi,
+        config: {
+            url: `${Config.tmdbApiUrl}/movie/${movieId}`,
+            params: {
+                api_key: Config.tmdbApiKey
             }
         },
         options: {
@@ -60,18 +75,25 @@ const MovieDetails = () => {
     };
 
     const visitImdb = () => {
-        
+        const imdbId = tmdbResponse.imdb_id;
+        const url = Config.getImdbTitleUrl(imdbId);
+        window.open(url, "blank");
     };
 
-    useEffect(() => {
-        updateMovieTitle(name);
-    }, [name]);
+    useEffect(() => updateMovieTitle(name), [name]);
+    useEffect(() => updateMovieId(id), [id]);
 
     useEffect(() => {
         if(movieTitle) {
             execute();
         }
     }, [movieTitle]);
+
+    useEffect(() => {
+        if(movieId) {
+            tmdbExecute();
+        }
+    }, [movieId]);
 
     if(loading) {
         return <Box display="flex" justifyContent="center" className={classes.spinner}>
@@ -107,7 +129,7 @@ const MovieDetails = () => {
                 <Button variant="contained" onClick={visitWikipedia} color="primary">View on Wikipedia</Button>
             </Grid>
             <Grid item xs>
-                <Button variant="contained" onClick={visitImdb} color="primary" disabled>View on IMDB</Button>
+                <Button variant="contained" onClick={visitImdb} color="primary" disabled={tmdbLoading || tmdbError}>View on IMDB</Button>
             </Grid>
         </Grid>
         

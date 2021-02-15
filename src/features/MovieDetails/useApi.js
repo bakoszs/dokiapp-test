@@ -9,7 +9,14 @@ const wikiApi = axios.create({
     }
 });
 
-const useWiki = ({ api = wikiApi, config = { method: "GET", url: null }, options = { manual: false}  }) => {
+const tmdbApi = axios.create({
+    baseURL: Config.tmdbApiUrl,
+    headers: {
+        "Accept": "application/json"
+    }
+});
+
+const useApi = ({ api, config = { method: "GET", url: null }, options = { manual: false}  }) => {
     const stringifiedConfig = JSON.stringify(config);
 
     const [response, updateResponse] = useState(null);
@@ -49,6 +56,6 @@ const useWiki = ({ api = wikiApi, config = { method: "GET", url: null }, options
     };
 };
 
-useWiki.displayName = "useWiki";
-export { useWiki };
-export default useWiki;
+useApi.displayName = "useApi";
+export { useApi, tmdbApi, wikiApi };
+export default useApi;

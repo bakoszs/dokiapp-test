@@ -1,0 +1,33 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: Npm@1
+  inputs:
+    command: 'install'
+
+- task: Npm@1
+  inputs:
+    command: 'custom'
+    customCommand: 'run build'
+
+- task: AzureRmWebAppDeployment@4
+  inputs:
+    ConnectionType: 'AzureRM'
+    azureSubscription: 'Visual Studio Premium with MSDN(b18afddc-ba9d-43bf-ada2-2fd62418a1f8)'
+    appType: 'webAppLinux'
+    WebAppName: 'dokiapp-test-bakoszs'
+    deployToSlotOrASE: true
+    ResourceGroupName: 'VS-bakoszs-Group'
+    SlotName: 'production'
+    packageForLinux: '$(System.DefaultWorkingDirectory)/build'
+
+

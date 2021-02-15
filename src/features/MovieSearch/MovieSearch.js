@@ -4,6 +4,7 @@ import Container from '@material-ui/core/Container';
 import { makeStyles } from '@material-ui/core/styles';
 import { SearchHandler } from "./SearchHandler";
 import { SearchQuery } from "./SearchQuery";
+import { Config } from "../../config";
 
 const useStyles = makeStyles((theme) => ({
     searchHeader: {
@@ -12,7 +13,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const client = new ApolloClient({
-    uri: "https://tmdb.sandbox.zoosh.ie/dev/graphql",
+    uri: Config.graphQlEndpoint,
     cache: new InMemoryCache()
 });
 
@@ -29,7 +30,7 @@ const MovieSearch = () => {
             <Container maxWidth="sm">
                 <SearchQuery headerText="Enter a movie title" onQueryChange={handleQueryChange} />
             </Container>
-            <Container maxWidth="md">
+            <Container>
                 <SearchHandler query={query} />
             </Container>            
         </div>

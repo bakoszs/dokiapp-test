@@ -3,21 +3,19 @@ import { gql } from "@apollo/client";
 export const FIND_MOVIES = gql`
     query SearchMovies($query: String!) {
         searchMovies(query: $query) {
-        id
-        name
-        overview
-        releaseDate
-        cast {
             id
-            person {
+            genres {
+                id
+                name
+            }
             name
+            overview
+            poster {
+                thumbnail
             }
-            role {
-            ... on Cast {
-                character
-            }
-            }
-        }
+            releaseDate
+            score
+            votes
         }
     }
 `;
